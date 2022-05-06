@@ -1,35 +1,37 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class LogonWindowsManager : MonoBehaviour
+namespace Logon
 {
-    [SerializeField]
-    private WindowsAsset logonWindowsAsset;
-
-    private void Start()
+    public class LogonWindowsManager : MonoBehaviour
     {
-        GameObject[] logonWindows = logonWindowsAsset.Windows;
-        foreach (GameObject go in logonWindows)
+        [SerializeField]
+        private GameObject[] logonWindowsPrefabs;
+    
+        private Canvas[] _logonWindowsCanvas;
+    
+        private Canvas _canvas;
+        private void Start()
         {
-            Instantiate(go, transform.parent).GetComponent<Canvas>().enabled = false;
+            _canvas = GetComponent<Canvas>();
+            _logonWindowsCanvas = new Canvas[logonWindowsPrefabs.Length];
+            for (int i = 0; i < logonWindowsPrefabs.Length; i++)
+            {
+                _logonWindowsCanvas[i] = Instantiate(logonWindowsPrefabs[i], transform.parent).GetComponent<Canvas>();
+                _logonWindowsCanvas[i].enabled = false;
+            }
         }
-    }
 
-    public void Registration()
-    {
-        
-    }
+        public void OpenWindow(int index)
+        {
+            _canvas.enabled = false;
+            _logonWindowsCanvas[index].enabled = true;
+            _logonWindowsCanvas[index].gameObject.SendMessage("SetParentCanvas", _canvas);
+        }
 
-    public void Authorization()
-    {
-        
-    }
-
-    public void Exit()
-    {
-        Debug.Log("Exit game...");
-        Application.Quit();
+        public void Exit()
+        {
+            Debug.Log("Exit game...");
+            Application.Quit();
+        }
     }
 }
